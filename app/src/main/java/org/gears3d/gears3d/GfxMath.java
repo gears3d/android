@@ -7,4 +7,10 @@ public class GfxMath {
         float[] f = new float[16];
         return f;
     }
+
+    static float[] mult_m4m4(float[] m1, float[] m2)
+    {
+        float[] d = new float[16];
+        return d;
+    }
 }
