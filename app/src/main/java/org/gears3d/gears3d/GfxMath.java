@@ -13,4 +13,10 @@ public class GfxMath {
         float[] d = new float[16];
         return d;
     }
+
+    static float[] translate(float x, float y, float z)
+    {
+        float[] d = new float[16];
+        return d;
+    }
 }
