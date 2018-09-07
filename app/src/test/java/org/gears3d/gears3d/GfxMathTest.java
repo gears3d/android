@@ -38,4 +38,15 @@ public class GfxMathTest {
                   0.0f, 0.0f, 1.0f, 0.0f, -1.0f, 2.0f, 3.0f, 1.0f };
         assertArrayEquals(expected, m, 0.01f);
     }
+
+    @Test
+    public void rotate() {
+        float[] m = GfxMath.rotate(1.0, -1.0, 2.0, 3.0);
+        float[] expected =
+                { 1.0f, 1.605018f, -3.062035f, 0.0f,
+                  -3.443808f, 2.379093f, 1.916715f, 0.0f,
+                  0.303849f, 3.599657f, 4.677582f, 0.0f,
+                  0.0f, 0.0f, 0.0f, 1.0f };
+        assertArrayEquals(expected, m, 0.01f);
+    }
 }
