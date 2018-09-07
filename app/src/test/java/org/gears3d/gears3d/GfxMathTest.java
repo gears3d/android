@@ -29,4 +29,13 @@ public class GfxMathTest {
                   -11.750001f, 39.0f, -84.720001f, 48.48f };
         assertArrayEquals(expected, m, 0.01f);
     }
+
+    @Test
+    public void translate() {
+        float[] m = GfxMath.translate(-1.0f, 2.0f, 3.0f);
+        float[] expected =
+                { 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+                  0.0f, 0.0f, 1.0f, 0.0f, -1.0f, 2.0f, 3.0f, 1.0f };
+        assertArrayEquals(expected, m, 0.01f);
+    }
 }
