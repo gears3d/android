@@ -19,4 +19,10 @@ public class GfxMath {
         float[] d = new float[16];
         return d;
     }
+
+    static float[] rotate(double angle, double x, double y, double z)
+    {
+        float[] d = new float[16];
+        return d;
+    }
 }
