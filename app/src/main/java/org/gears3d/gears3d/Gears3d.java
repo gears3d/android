@@ -7,6 +7,7 @@ import android.opengl.GLES20;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.HashMap;
 
 public class Gears3d {
     FloatBuffer mVertexBuffer;
@@ -97,4 +98,17 @@ public class Gears3d {
         GLES20.glUniform1f(gear_angle_loc, gear_angle);
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 3);
     }
+
+    int uniformLoc(String u) {
+        if (uniform_locs.containsKey(u)) {
+            return uniform_locs.get(u);
+        }
+
+        int loc = GLES20.glGetUniformLocation(program, u);
+        assert loc >= 0;
+        uniform_locs.put(u, loc);
+        return loc;
+    }
+
+    HashMap<String, Integer> uniform_locs = new HashMap();
 }
