@@ -120,8 +120,9 @@ public class Gears3d {
     }
 
     private float gear_angle;
-    private static long NANO_PER_REV = 1000000000L * 60 / 70;
+    private static long NANO_PER_REV = 1000000000L * 360 / 70;
     private long start_time = System.nanoTime();
+
     private void update_angle() {
         long nano_time = System.nanoTime() - start_time;
         if (NANO_PER_REV >= nano_time) {
