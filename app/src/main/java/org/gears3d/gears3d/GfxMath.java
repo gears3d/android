@@ -16,8 +16,28 @@ public class GfxMath {
 
     static float[] translate(float x, float y, float z)
     {
-        float[] d = new float[16];
-        return d;
+        /* https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glTranslate.xml
+         *
+         * /              \
+         * |  1  0  0  x  |
+         * |              |
+         * |  0  1  0  y  |
+         * |              |
+         * |  0  0  1  z  |
+         * |              |
+         * |  0  0  0  1  |
+         * \              /
+         *
+         */
+        float[] mat4 = new float[16];
+        mat4[mat4_idx(0, 0)] = 1.0f;
+        mat4[mat4_idx(1, 1)] = 1.0f;
+        mat4[mat4_idx(2, 2)] = 1.0f;
+        mat4[mat4_idx(3, 3)] = 1.0f;
+        mat4[mat4_idx(0, 3)] = x;
+        mat4[mat4_idx(1, 3)] = y;
+        mat4[mat4_idx(2, 3)] = z;
+        return mat4;
     }
 
     static float[] rotate(double angle, double x, double y, double z)
