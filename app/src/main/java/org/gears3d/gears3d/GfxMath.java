@@ -8,10 +8,22 @@ public class GfxMath {
         return f;
     }
 
-    static float[] mult_m4m4(float[] m1, float[] m2)
+    static float[] mult_m4m4(float[] src1, float[] src2)
     {
-        float[] d = new float[16];
-        return d;
+        int i, j;
+        float[] mat4 = new float[16];
+
+        for (i = 0; i < 4; i++) {
+            for (j = 0; j < 4; j++) {
+                mat4[mat4_idx(i, j)] =
+                    src1[mat4_idx(i, 0)] * src2[mat4_idx(0, j)] +
+                    src1[mat4_idx(i, 1)] * src2[mat4_idx(1, j)] +
+                    src1[mat4_idx(i, 2)] * src2[mat4_idx(2, j)] +
+                    src1[mat4_idx(i, 3)] * src2[mat4_idx(3, j)];
+            }
+        }
+
+        return mat4;
     }
 
     static float[] translate(float x, float y, float z)
