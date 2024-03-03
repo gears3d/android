@@ -83,6 +83,10 @@ public class Gears3d {
             "\n" +
             "attribute vec3 vertex;\n" +
             "attribute vec3 rel_norm;\n" +
+            "varying vec3 norm;\n" +
+            "varying vec3 light_dir;\n" +
+            "\n" +
+            "const vec3 light_pos = vec3(5.0, 5.0, 10.0);\n" +
             "\n" +
             "void main()\n" +
             "{\n" +
@@ -94,16 +98,28 @@ public class Gears3d {
             "    vec4 m_pos = model * vec4(pos, 1.0);\n" +
             "    m_pos = vec4(m_pos.xyz / m_pos.w, 1.0);\n" +
             "    gl_Position = projection * view * m_pos;\n" +
+            "\n" +
+            "    light_dir = normalize(light_pos - m_pos.xyz);\n" +
+            "\n" +
+            "    vec3 n_pos = vertex + rel_norm;\n" +
+            "    n_pos = vec3(rotz * n_pos.xy, n_pos.z);\n" +
+            "    vec4 m_norm = model * vec4(n_pos, 1.0);\n" +
+            "    norm = normalize((m_norm.xyz / m_norm.w) - m_pos.xyz);\n" +
             "}\n";
 
     private final String fs_src = "#version 100\n" +
             "precision highp float;\n" +
             "\n" +
+            "varying vec3 norm;\n" +
+            "varying vec3 light_dir;\n" +
+            "\n" +
             "uniform vec4 gear_color;\n" +
             "\n" +
             "void main()\n" +
             "{\n" +
-            "    gl_FragColor = vec4(gear_color.xyz, 1.0);\n" +
+            "    float light_ref = clamp(0.0+dot(norm, light_dir), -0.0, 1.0);\n" +
+            "    float light = clamp(0.2+light_ref, 0.1, 1.0);\n" +
+            "    gl_FragColor = vec4(light * gear_color.xyz, 1.0);\n" +
             "}\n";
 
     static void rotate_gears(float x, float y, float z)
