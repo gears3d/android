@@ -74,6 +74,7 @@ public class Gears3d {
     private final String vs_src = "#version 100\n" +
             "\n" +
             "uniform mat4 view;\n" +
+            "uniform mat4 projection;\n" +
             "\n" +
             "uniform float gear_angle;\n" +
             "\n" +
@@ -87,7 +88,7 @@ public class Gears3d {
             "                     vec2(-sin(ang), cos(ang)));\n" +
             "\n" +
             "    vec3 pos = vec3(rotz * vertex.xy, vertex.z);\n" +
-            "    gl_Position = view * vec4(pos, 1.0);\n" +
+            "    gl_Position = projection * view * vec4(pos, 1.0);\n" +
             "}\n";
 
     private final String fs_src = "#version 100\n" +
@@ -126,6 +127,11 @@ public class Gears3d {
 
         float[] m4 = GfxMath.translate(0.0f, 0.0f, -40.0f);
         GLES20.glUniformMatrix4fv(uniformLoc("view"), 1, false, m4, 0);
+
+        float h = (float) height / width;
+        m4 = GfxMath.frustum(-1.0, 1.0, -h, h, 5.0, 200.0);
+        GLES20.glUniformMatrix4fv(uniformLoc("projection"), 1, false,
+            m4, 0);
     }
 
     private float gear_angle;
