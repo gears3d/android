@@ -63,7 +63,7 @@ public class Gears3d {
         GLES20.glClearColor(0.0f, 0.1f, 0.0f, 1.0f);
         program = GlShader.gl_program_vf_str(vs_src, fs_src);
         GLES20.glUseProgram(program);
-        gear_angle_loc = GLES20.glGetUniformLocation(program, "gear_angle");
+        gear_angle_loc = uniformLoc("gear_angle");
         final int[] a_vert_bo = new int[1];
         GLES20.glGenBuffers(1, a_vert_bo, 0);
         vert_bo = a_vert_bo[0];
