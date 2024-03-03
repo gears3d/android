@@ -14,6 +14,7 @@ public class Gears3d {
     int program;
     int vert_bo;
     int gear_angle_loc;
+    int gear_color_loc;
     int model_loc;
 
     static GearInfo[] gears = {
@@ -98,9 +99,11 @@ public class Gears3d {
     private final String fs_src = "#version 100\n" +
             "precision highp float;\n" +
             "\n" +
+            "uniform vec4 gear_color;\n" +
+            "\n" +
             "void main()\n" +
             "{\n" +
-            "    gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);\n" +
+            "    gl_FragColor = vec4(gear_color.xyz, 1.0);\n" +
             "}\n";
 
     static void rotate_gears(float x, float y, float z)
@@ -134,6 +137,7 @@ public class Gears3d {
         program = GlShader.gl_program_vf_str(vs_src, fs_src);
         GLES20.glUseProgram(program);
         gear_angle_loc = uniformLoc("gear_angle");
+        gear_color_loc = uniformLoc("gear_color");
         model_loc = uniformLoc("model");
         final int[] a_vert_bo = new int[1];
         GLES20.glGenBuffers(1, a_vert_bo, 0);
@@ -183,6 +187,7 @@ public class Gears3d {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         for (GearInfo g : gears) {
             GLES20.glUniform1f(gear_angle_loc, g.angle);
+            GLES20.glUniform4fv(gear_color_loc, 1, g.color, 0);
             GLES20.glUniformMatrix4fv(model_loc, 1, false, g.model, 0);
             GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, g.vertex_buf_offset,
                                 g.num_vertices);
