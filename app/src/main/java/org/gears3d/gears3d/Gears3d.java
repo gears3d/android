@@ -49,21 +49,25 @@ public class Gears3d {
     };
 
     public Gears3d() {
-        final float[] vertData = {
-                -0.5f, -0.5f, 0.0f,
-                0.0f, 0.0f, 1.0f,
+        int total_vert_count = 0;
+        for (GearInfo g : gears) {
+            g.vertex_buf_offset = total_vert_count;
+            g.num_vertices = VertBuf.gear_vertex_count(g.teeth);
+            total_vert_count += g.num_vertices;
+        }
 
-                0.5f, -0.5f, 0.0f,
-                0.0f, 0.0f, 1.0f,
-
-                0.0f, 0.5f, 0.0f,
-                0.0f, 0.0f, 1.0f,
-        };
-
-        ByteBuffer vertexBuffer = ByteBuffer.allocateDirect(vertData.length * 4);
+        int floats_count = total_vert_count * VertBuf.FLOATS_PER_VERT;
+        int bytes_count = floats_count * 4;
+        ByteBuffer vertexBuffer = ByteBuffer.allocateDirect(bytes_count);
         vertexBuffer.order(ByteOrder.nativeOrder());
         mVertexBuffer = vertexBuffer.asFloatBuffer();
-        mVertexBuffer.put(vertData);
+
+        for (GearInfo g : gears) {
+            VertBuf.fill_gear_vertices(mVertexBuffer, g.inner_radius,
+                                       g.outer_radius, g.width,
+                                       g.teeth, g.tooth_depth);
+        }
+
         mVertexBuffer.position(0);
     }
 
@@ -129,13 +133,19 @@ public class Gears3d {
             nano_time -= NANO_PER_REV;
         }
         gear_angle = (float)(2 * Math.PI * ((double)nano_time / NANO_PER_REV));
+        for (GearInfo g : gears) {
+            g.angle = gear_angle * g.angle_rate + g.angle_adjust;
+        }
     }
 
     public void draw() {
         update_angle();
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-        GLES20.glUniform1f(gear_angle_loc, gear_angle);
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 3);
+        for (GearInfo g : gears) {
+            GLES20.glUniform1f(gear_angle_loc, g.angle);
+            GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, g.vertex_buf_offset,
+                                g.num_vertices);
+        }
     }
 
     int uniformLoc(String u) {
