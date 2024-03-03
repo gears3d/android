@@ -14,6 +14,7 @@ public class Gears3d {
     int program;
     int vert_bo;
     int gear_angle_loc;
+    int model_loc;
 
     static GearInfo[] gears = {
         new GearInfo()
@@ -73,6 +74,7 @@ public class Gears3d {
 
     private final String vs_src = "#version 100\n" +
             "\n" +
+            "uniform mat4 model;\n" +
             "uniform mat4 view;\n" +
             "uniform mat4 projection;\n" +
             "\n" +
@@ -88,7 +90,9 @@ public class Gears3d {
             "                     vec2(-sin(ang), cos(ang)));\n" +
             "\n" +
             "    vec3 pos = vec3(rotz * vertex.xy, vertex.z);\n" +
-            "    gl_Position = projection * view * vec4(pos, 1.0);\n" +
+            "    vec4 m_pos = model * vec4(pos, 1.0);\n" +
+            "    m_pos = vec4(m_pos.xyz / m_pos.w, 1.0);\n" +
+            "    gl_Position = projection * view * m_pos;\n" +
             "}\n";
 
     private final String fs_src = "#version 100\n" +
@@ -98,6 +102,27 @@ public class Gears3d {
             "{\n" +
             "    gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);\n" +
             "}\n";
+
+    static void rotate_gears(float x, float y, float z)
+    {
+        float[] m4, tmp;
+        int i;
+
+        for (GearInfo g : gears) {
+            m4 = GfxMath.rotate(x, 1.0, 0.0, 0.0);
+            if (y != 0.0) {
+                tmp = GfxMath.rotate(y, 0.0, 1.0, 0.0);
+                m4 = GfxMath.mult_m4m4(m4, tmp);
+            }
+            if (z != 0.0) {
+                tmp = GfxMath.rotate(z, 0.0, 0.0, 1.0);
+                m4 = GfxMath.mult_m4m4(m4, tmp);
+            }
+            tmp = GfxMath.translate(g.translate[0], g.translate[1], 0.0f);
+            m4 = GfxMath.mult_m4m4(m4, tmp);
+            g.setModel(m4);
+        }
+    }
 
     public void set_global_state() {
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
@@ -109,6 +134,7 @@ public class Gears3d {
         program = GlShader.gl_program_vf_str(vs_src, fs_src);
         GLES20.glUseProgram(program);
         gear_angle_loc = uniformLoc("gear_angle");
+        model_loc = uniformLoc("model");
         final int[] a_vert_bo = new int[1];
         GLES20.glGenBuffers(1, a_vert_bo, 0);
         vert_bo = a_vert_bo[0];
@@ -120,6 +146,9 @@ public class Gears3d {
         GlShader.gl_attrib_ptr(program, "rel_norm", 3, GLES20.GL_FLOAT, false,
                 6 * 4, 3 * 4);
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
+
+        rotate_gears((float) (20.0f / 180.0f * Math.PI),
+                     (float) (30.0f / 180.0f * Math.PI), 0.0f);
     }
 
     public void win_resize(int width, int height) {
@@ -154,6 +183,7 @@ public class Gears3d {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         for (GearInfo g : gears) {
             GLES20.glUniform1f(gear_angle_loc, g.angle);
+            GLES20.glUniformMatrix4fv(model_loc, 1, false, g.model, 0);
             GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, g.vertex_buf_offset,
                                 g.num_vertices);
         }
