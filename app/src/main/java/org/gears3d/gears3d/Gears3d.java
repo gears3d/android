@@ -15,6 +15,39 @@ public class Gears3d {
     int vert_bo;
     int gear_angle_loc;
 
+    static GearInfo[] gears = {
+        new GearInfo()
+            .setTeeth(20)
+            .setInner_radius(1.0f)
+            .setOuter_radius(4.0f)
+            .setWidth(1.0f)
+            .setTooth_depth(0.7f)
+            .setAngle_rate(1.0f)
+            .setAngle_adjust(0.0f)
+            .setTranslate(new float[] { -3.0f, -2.0f })
+            .setColor(new float[] { 0.8f, 0.1f, 0.0f, 1.0f }),
+        new GearInfo()
+            .setTeeth(10)
+            .setInner_radius(0.5f)
+            .setOuter_radius(2.0f)
+            .setWidth(2.0f)
+            .setTooth_depth(0.7f)
+            .setAngle_rate(-2.0f)
+            .setAngle_adjust((float) (Math.PI * -9.0 / 180.0))
+            .setTranslate(new float[] { 3.1f, -2.0f })
+            .setColor(new float[] { 0.0f, 0.8f, 0.2f, 1.0f }),
+        new GearInfo()
+            .setTeeth(10)
+            .setInner_radius(1.3f)
+            .setOuter_radius(2.0f)
+            .setWidth(0.5f)
+            .setTooth_depth(0.7f)
+            .setAngle_rate(-2.0f)
+            .setAngle_adjust((float) (Math.PI * -25.0 / 180.0))
+            .setTranslate(new float[] { -3.1f, 4.2f })
+            .setColor(new float[] { 0.2f, 0.2f, 1.0f, 1.0f }),
+    };
+
     public Gears3d() {
         final float[] vertData = {
                 -0.5f, -0.5f, 0.0f,
