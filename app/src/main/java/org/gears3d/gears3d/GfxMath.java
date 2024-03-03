@@ -4,8 +4,54 @@ public class GfxMath {
     static float[] frustum(double left, double right, double bottom,
                            double top, double nearVal, double farVal)
     {
-        float[] f = new float[16];
-        return f;
+        /* https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glFrustum.xml
+         *
+         * perspective matrix:
+         *
+         * /   2 * nearVal                                \
+         * |  ------------       0            A      0    |
+         * |  right - left                                |
+         * |                                              |
+         * |                 2 * nearVal                  |
+         * |       0        ------------      B      0    |
+         * |                top - bottom                  |
+         * |                                              |
+         * |       0             0            C      D    |
+         * |                                              |
+         * |       0             0           -1      0    |
+         * \                                              /
+         *
+         *     right + left
+         * A = ------------
+         *     right - left
+         *
+         *     top + bottom
+         * B = ------------
+         *     top - bottom
+         *
+         *       farVal + nearVal
+         * C = - ----------------
+         *       farVal - nearVal
+         *
+         *       2 * farVal * nearVal
+         * D = - --------------------
+         *         farVal - nearVal
+         *
+         */
+        assert left != right && top != bottom && farVal != nearVal;
+        double A = (right + left) / (right - left);
+        double B = (top + bottom) / (top - bottom);
+        double C = - (farVal + nearVal) / (farVal - nearVal);
+        double D = - (2.0 * farVal * nearVal) / (farVal - nearVal);
+        float[] mat4 = new float[16];
+        mat4[mat4_idx(0, 0)] = (float) ((2.0 * nearVal) / (right - left));
+        mat4[mat4_idx(0, 2)] = (float) A;
+        mat4[mat4_idx(1, 1)] = (float) ((2.0 * nearVal) / (top - bottom));
+        mat4[mat4_idx(1, 2)] = (float) B;
+        mat4[mat4_idx(2, 2)] = (float) C;
+        mat4[mat4_idx(2, 3)] = (float) D;
+        mat4[mat4_idx(3, 2)] = -1.0f;
+        return mat4;
     }
 
     static float[] mult_m4m4(float[] src1, float[] src2)
