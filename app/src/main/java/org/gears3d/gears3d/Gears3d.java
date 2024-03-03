@@ -93,6 +93,9 @@ public class Gears3d {
             "}\n";
 
     public void set_global_state() {
+        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+        GLES20.glDepthFunc(GLES20.GL_LESS);
+
         GLES20.glClearColor(0.0f, 0.1f, 0.0f, 1.0f);
         program = GlShader.gl_program_vf_str(vs_src, fs_src);
         GLES20.glUseProgram(program);
@@ -127,7 +130,7 @@ public class Gears3d {
 
     public void draw() {
         update_angle();
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         GLES20.glUniform1f(gear_angle_loc, gear_angle);
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 3);
     }
