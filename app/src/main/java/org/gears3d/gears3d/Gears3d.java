@@ -73,10 +73,12 @@ public class Gears3d {
 
     private final String vs_src = "#version 100\n" +
             "\n" +
-            "attribute vec3 vertex;\n" +
-            "attribute vec3 rel_norm;\n" +
+            "uniform mat4 view;\n" +
             "\n" +
             "uniform float gear_angle;\n" +
+            "\n" +
+            "attribute vec3 vertex;\n" +
+            "attribute vec3 rel_norm;\n" +
             "\n" +
             "void main()\n" +
             "{\n" +
@@ -85,7 +87,7 @@ public class Gears3d {
             "                     vec2(-sin(ang), cos(ang)));\n" +
             "\n" +
             "    vec3 pos = vec3(rotz * vertex.xy, vertex.z);\n" +
-            "    gl_Position = vec4(pos, 1.0);\n" +
+            "    gl_Position = view * vec4(pos, 1.0);\n" +
             "}\n";
 
     private final String fs_src = "#version 100\n" +
@@ -121,6 +123,9 @@ public class Gears3d {
 
     public void win_resize(int width, int height) {
         GLES20.glViewport(0, 0, width, height);
+
+        float[] m4 = GfxMath.translate(0.0f, 0.0f, -40.0f);
+        GLES20.glUniformMatrix4fv(uniformLoc("view"), 1, false, m4, 0);
     }
 
     private float gear_angle;
