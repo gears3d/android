@@ -6,6 +6,8 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
+private const val NANO_PER_REV = 1000000000L * 360 / 70
+
 class Gears3d {
     var mVertexBuffer: FloatBuffer
     var program = 0
@@ -13,6 +15,37 @@ class Gears3d {
     var gear_angle_loc = 0
     var gear_color_loc = 0
     var model_loc = 0
+    var gears = arrayOf(
+        GearInfo()
+            .setTeeth(20)
+            .setInner_radius(1.0f)
+            .setOuter_radius(4.0f)
+            .setWidth(1.0f)
+            .setTooth_depth(0.7f)
+            .setAngle_rate(1.0f)
+            .setAngle_adjust(0.0f)
+            .setTranslate(arrayOf(-3.0f, -2.0f))
+            .setColor(arrayOf(0.8f, 0.1f, 0.0f, 1.0f)),
+        GearInfo()
+            .setTeeth(10)
+            .setInner_radius(0.5f)
+            .setOuter_radius(2.0f)
+            .setWidth(2.0f)
+            .setTooth_depth(0.7f)
+            .setAngle_rate(-2.0f)
+            .setAngle_adjust((Math.PI * -9.0 / 180.0).toFloat())
+            .setTranslate(arrayOf(3.1f, -2.0f))
+            .setColor(arrayOf(0.0f, 0.8f, 0.2f, 1.0f)),
+        GearInfo()
+            .setTeeth(10)
+            .setInner_radius(1.3f)
+            .setOuter_radius(2.0f)
+            .setWidth(0.5f)
+            .setTooth_depth(0.7f)
+            .setAngle_rate(-2.0f)
+            .setAngle_adjust((Math.PI * -25.0 / 180.0).toFloat())
+            .setTranslate(arrayOf(-3.1f, 4.2f))
+            .setColor(arrayOf(0.2f, 0.2f, 1.0f, 1.0f)))
     private val vs_src = """#version 100
 
 uniform mat4 model;
@@ -157,59 +190,23 @@ void main()
         mVertexBuffer.position(0)
     }
 
-    companion object {
-        var gears = arrayOf(
-                GearInfo()
-                        .setTeeth(20)
-                        .setInner_radius(1.0f)
-                        .setOuter_radius(4.0f)
-                        .setWidth(1.0f)
-                        .setTooth_depth(0.7f)
-                        .setAngle_rate(1.0f)
-                        .setAngle_adjust(0.0f)
-                        .setTranslate(arrayOf(-3.0f, -2.0f))
-                        .setColor(arrayOf(0.8f, 0.1f, 0.0f, 1.0f)),
-                GearInfo()
-                        .setTeeth(10)
-                        .setInner_radius(0.5f)
-                        .setOuter_radius(2.0f)
-                        .setWidth(2.0f)
-                        .setTooth_depth(0.7f)
-                        .setAngle_rate(-2.0f)
-                        .setAngle_adjust((Math.PI * -9.0 / 180.0).toFloat())
-                        .setTranslate(arrayOf(3.1f, -2.0f))
-                        .setColor(arrayOf(0.0f, 0.8f, 0.2f, 1.0f)),
-                GearInfo()
-                        .setTeeth(10)
-                        .setInner_radius(1.3f)
-                        .setOuter_radius(2.0f)
-                        .setWidth(0.5f)
-                        .setTooth_depth(0.7f)
-                        .setAngle_rate(-2.0f)
-                        .setAngle_adjust((Math.PI * -25.0 / 180.0).toFloat())
-                        .setTranslate(arrayOf(-3.1f, 4.2f))
-                        .setColor(arrayOf(0.2f, 0.2f, 1.0f, 1.0f)))
-
-        fun rotate_gears(x: Float, y: Float, z: Float) {
-            var m4: Array<Float>
-            var tmp: Array<Float>
-            var i: Int
-            for (g in gears) {
-                m4 = GfxMath.rotate(x.toDouble(), 1.0, 0.0, 0.0)
-                if (y.toDouble() != 0.0) {
-                    tmp = GfxMath.rotate(y.toDouble(), 0.0, 1.0, 0.0)
-                    m4 = GfxMath.mult_m4m4(m4, tmp)
-                }
-                if (z.toDouble() != 0.0) {
-                    tmp = GfxMath.rotate(z.toDouble(), 0.0, 0.0, 1.0)
-                    m4 = GfxMath.mult_m4m4(m4, tmp)
-                }
-                tmp = GfxMath.translate(g.translate[0], g.translate[1], 0.0f)
+    fun rotate_gears(x: Float, y: Float, z: Float) {
+        var m4: Array<Float>
+        var tmp: Array<Float>
+        var i: Int
+        for (g in gears) {
+            m4 = GfxMath.rotate(x.toDouble(), 1.0, 0.0, 0.0)
+            if (y.toDouble() != 0.0) {
+                tmp = GfxMath.rotate(y.toDouble(), 0.0, 1.0, 0.0)
                 m4 = GfxMath.mult_m4m4(m4, tmp)
-                g.setModel(m4)
             }
+            if (z.toDouble() != 0.0) {
+                tmp = GfxMath.rotate(z.toDouble(), 0.0, 0.0, 1.0)
+                m4 = GfxMath.mult_m4m4(m4, tmp)
+            }
+            tmp = GfxMath.translate(g.translate[0], g.translate[1], 0.0f)
+            m4 = GfxMath.mult_m4m4(m4, tmp)
+            g.setModel(m4)
         }
-
-        private const val NANO_PER_REV = 1000000000L * 360 / 70
     }
 }
