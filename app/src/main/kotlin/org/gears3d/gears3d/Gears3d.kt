@@ -118,7 +118,11 @@ void main()
         GlShader.gl_attrib_ptr(program, "rel_norm", 3, GLES20.GL_FLOAT, false,
                 6 * 4, 3 * 4)
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0)
-        rotate_gears((20.0f / 180.0f * Math.PI).toFloat(), (30.0f / 180.0f * Math.PI).toFloat(), 0.0f)
+
+        for (g in gears) {
+            g.rotate_gear((20.0f / 180.0f * Math.PI).toFloat(),
+                          (30.0f / 180.0f * Math.PI).toFloat(), 0.0f)
+        }
     }
 
     fun win_resize(width: Int, height: Int) {
@@ -188,25 +192,5 @@ void main()
                     g.teeth, g.tooth_depth)
         }
         mVertexBuffer.position(0)
-    }
-
-    fun rotate_gears(x: Float, y: Float, z: Float) {
-        var m4: Array<Float>
-        var tmp: Array<Float>
-        var i: Int
-        for (g in gears) {
-            m4 = GfxMath.rotate(x.toDouble(), 1.0, 0.0, 0.0)
-            if (y.toDouble() != 0.0) {
-                tmp = GfxMath.rotate(y.toDouble(), 0.0, 1.0, 0.0)
-                m4 = GfxMath.mult_m4m4(m4, tmp)
-            }
-            if (z.toDouble() != 0.0) {
-                tmp = GfxMath.rotate(z.toDouble(), 0.0, 0.0, 1.0)
-                m4 = GfxMath.mult_m4m4(m4, tmp)
-            }
-            tmp = GfxMath.translate(g.translate[0], g.translate[1], 0.0f)
-            m4 = GfxMath.mult_m4m4(m4, tmp)
-            g.setModel(m4)
-        }
     }
 }

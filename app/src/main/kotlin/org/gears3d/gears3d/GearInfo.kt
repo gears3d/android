@@ -60,6 +60,23 @@ class GearInfo {
         return this
     }
 
+    fun rotate_gear(x: Float, y: Float, z: Float) {
+        var m4: Array<Float>
+
+        m4 = GfxMath.rotate(x.toDouble(), 1.0, 0.0, 0.0)
+        if (y.toDouble() != 0.0) {
+            var tmp = GfxMath.rotate(y.toDouble(), 0.0, 1.0, 0.0)
+            m4 = GfxMath.mult_m4m4(m4, tmp)
+        }
+        if (z.toDouble() != 0.0) {
+            var tmp = GfxMath.rotate(z.toDouble(), 0.0, 0.0, 1.0)
+            m4 = GfxMath.mult_m4m4(m4, tmp)
+        }
+
+        var xlat = GfxMath.translate(translate[0], translate[1], 0.0f)
+        this.model = GfxMath.mult_m4m4(m4, xlat)
+    }
+
     fun setModel(model: Array<Float>): GearInfo {
         this.model = model
         return this
