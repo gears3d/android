@@ -9,9 +9,9 @@ class GearInfo {
     var tooth_depth = 0f
     var angle_rate = 0f
     var angle_adjust = 0f
-    var translate: FloatArray
-    var color: FloatArray
-    var model: FloatArray?
+    var translate: Array<Float> = emptyArray<Float>()
+    var color: Array<Float> = emptyArray<Float>()
+    var model: Array<Float> = emptyArray<Float>()
     var angle = 0f
     var num_vertices = 0
     var vertex_buf_offset = 0
@@ -50,17 +50,17 @@ class GearInfo {
         return this
     }
 
-    fun setTranslate(translate: FloatArray): GearInfo {
+    fun setTranslate(translate: Array<Float>): GearInfo {
         this.translate = translate
         return this
     }
 
-    fun setColor(color: FloatArray): GearInfo {
+    fun setColor(color: Array<Float>): GearInfo {
         this.color = color
         return this
     }
 
-    fun setModel(model: FloatArray?): GearInfo {
+    fun setModel(model: Array<Float>): GearInfo {
         this.model = model
         return this
     }

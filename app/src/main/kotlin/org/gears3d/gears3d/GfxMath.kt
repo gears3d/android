@@ -2,7 +2,7 @@ package org.gears3d.gears3d
 
 object GfxMath {
     fun frustum(left: Double, right: Double, bottom: Double,
-                top: Double, nearVal: Double, farVal: Double): FloatArray {
+                top: Double, nearVal: Double, farVal: Double): Array<Float> {
         /* https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glFrustum.xml
          *
          * perspective matrix:
@@ -42,7 +42,7 @@ object GfxMath {
         val B = (top + bottom) / (top - bottom)
         val C = -(farVal + nearVal) / (farVal - nearVal)
         val D = -(2.0 * farVal * nearVal) / (farVal - nearVal)
-        val mat4 = FloatArray(16)
+        val mat4 = Array<Float>(16) { 0.0f }
         mat4[mat4_idx(0, 0)] = (2.0 * nearVal / (right - left)).toFloat()
         mat4[mat4_idx(0, 2)] = A.toFloat()
         mat4[mat4_idx(1, 1)] = (2.0 * nearVal / (top - bottom)).toFloat()
@@ -53,15 +53,19 @@ object GfxMath {
         return mat4
     }
 
-    fun mult_m4m4(src1: FloatArray?, src2: FloatArray?): FloatArray {
+    fun mult_m4m4(src1: Array<Float>, src2: Array<Float>): Array<Float> {
         var i: Int
         var j: Int
-        val mat4 = FloatArray(16)
+        val mat4 = Array<Float>(16) { 0.0f }
         i = 0
         while (i < 4) {
             j = 0
             while (j < 4) {
-                mat4[mat4_idx(i, j)] = src1!![mat4_idx(i, 0)] * src2!![mat4_idx(0, j)] + src1[mat4_idx(i, 1)] * src2[mat4_idx(1, j)] + src1[mat4_idx(i, 2)] * src2[mat4_idx(2, j)] + src1[mat4_idx(i, 3)] * src2[mat4_idx(3, j)]
+                mat4[mat4_idx(i, j)] =
+                    src1[mat4_idx(i, 0)] * src2[mat4_idx(0, j)] +
+                    src1[mat4_idx(i, 1)] * src2[mat4_idx(1, j)] +
+                    src1[mat4_idx(i, 2)] * src2[mat4_idx(2, j)] +
+                    src1[mat4_idx(i, 3)] * src2[mat4_idx(3, j)]
                 j++
             }
             i++
@@ -69,7 +73,7 @@ object GfxMath {
         return mat4
     }
 
-    fun translate(x: Float, y: Float, z: Float): FloatArray {
+    fun translate(x: Float, y: Float, z: Float): Array<Float> {
         /* https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glTranslate.xml
          *
          * /              \
@@ -83,7 +87,7 @@ object GfxMath {
          * \              /
          *
          */
-        val mat4 = FloatArray(16)
+        val mat4 = Array<Float>(16) { 0.0f }
         mat4[mat4_idx(0, 0)] = 1.0f
         mat4[mat4_idx(1, 1)] = 1.0f
         mat4[mat4_idx(2, 2)] = 1.0f
@@ -94,7 +98,7 @@ object GfxMath {
         return mat4
     }
 
-    fun rotate(angle: Double, x: Double, y: Double, z: Double): FloatArray {
+    fun rotate(angle: Double, x: Double, y: Double, z: Double): Array<Float> {
         /* https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glRotate.xml
          *
          * perspective matrix:
@@ -115,7 +119,7 @@ object GfxMath {
         val c = Math.cos(angle)
         val omc = 1.0 - c
         val s = Math.sin(angle)
-        val mat4 = FloatArray(16)
+        val mat4 = Array<Float>(16) { 0.0f }
         mat4[mat4_idx(0, 0)] = (x * x * omc + c).toFloat()
         mat4[mat4_idx(0, 1)] = (x * y * omc - z * s).toFloat()
         mat4[mat4_idx(0, 2)] = (x * z * omc + y * s).toFloat()
