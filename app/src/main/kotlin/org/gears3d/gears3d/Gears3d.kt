@@ -91,11 +91,12 @@ void main()
     fun win_resize(width: Int, height: Int) {
         GLES20.glViewport(0, 0, width, height)
         var m4 = GfxMath.translate(0.0f, 0.0f, -40.0f)
-        GLES20.glUniformMatrix4fv(uniformLoc("view"), 1, false, m4, 0)
+        GLES20.glUniformMatrix4fv(uniformLoc("view"), 1, false,
+                                  m4.toFloatArray(), 0)
         val h = height.toFloat() / width
         m4 = GfxMath.frustum(-1.0, 1.0, -h.toDouble(), h.toDouble(), 5.0, 200.0)
         GLES20.glUniformMatrix4fv(uniformLoc("projection"), 1, false,
-                m4, 0)
+                m4.toFloatArray(), 0)
     }
 
     private var gear_angle = 0f
@@ -107,7 +108,7 @@ void main()
         }
         gear_angle = (2 * Math.PI * (nano_time.toDouble() / NANO_PER_REV)).toFloat()
         for (g in gears) {
-            g!!.angle = gear_angle * g.angle_rate + g.angle_adjust
+            g.angle = gear_angle * g.angle_rate + g.angle_adjust
         }
     }
 
@@ -115,15 +116,16 @@ void main()
         update_angle()
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
         for (g in gears) {
-            GLES20.glUniform1f(gear_angle_loc, g!!.angle)
-            GLES20.glUniform4fv(gear_color_loc, 1, g.color, 0)
-            GLES20.glUniformMatrix4fv(model_loc, 1, false, g.model, 0)
-            GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, g.vertex_buf_offset,
-                    g.num_vertices)
+            GLES20.glUniform1f(gear_angle_loc, g.angle)
+            GLES20.glUniform4fv(gear_color_loc, 1, g.color.toFloatArray(), 0)
+            GLES20.glUniformMatrix4fv(model_loc, 1, false,
+                                      g.model.toFloatArray(), 0)
+            GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP,
+                                g.vertex_buf_offset, g.num_vertices)
         }
     }
 
-    fun uniformLoc(u: String?): Int {
+    fun uniformLoc(u: String): Int {
         if (uniform_locs.containsKey(u)) {
             return uniform_locs[u]!!
         }
@@ -133,12 +135,12 @@ void main()
         return loc
     }
 
-    var uniform_locs: HashMap<String?, Int?> = HashMap<Any?, Any?>()
+    var uniform_locs: HashMap<String, Int> = HashMap()
 
     init {
         var total_vert_count = 0
         for (g in gears) {
-            g!!.vertex_buf_offset = total_vert_count
+            g.vertex_buf_offset = total_vert_count
             g.num_vertices = VertBuf.gear_vertex_count(g.teeth)
             total_vert_count += g.num_vertices
         }
@@ -148,7 +150,7 @@ void main()
         vertexBuffer.order(ByteOrder.nativeOrder())
         mVertexBuffer = vertexBuffer.asFloatBuffer()
         for (g in gears) {
-            VertBuf.fill_gear_vertices(mVertexBuffer, g!!.inner_radius,
+            VertBuf.fill_gear_vertices(mVertexBuffer, g.inner_radius,
                     g.outer_radius, g.width,
                     g.teeth, g.tooth_depth)
         }
@@ -165,8 +167,8 @@ void main()
                         .setTooth_depth(0.7f)
                         .setAngle_rate(1.0f)
                         .setAngle_adjust(0.0f)
-                        .setTranslate(floatArrayOf(-3.0f, -2.0f))
-                        .setColor(floatArrayOf(0.8f, 0.1f, 0.0f, 1.0f)),
+                        .setTranslate(arrayOf(-3.0f, -2.0f))
+                        .setColor(arrayOf(0.8f, 0.1f, 0.0f, 1.0f)),
                 GearInfo()
                         .setTeeth(10)
                         .setInner_radius(0.5f)
@@ -175,8 +177,8 @@ void main()
                         .setTooth_depth(0.7f)
                         .setAngle_rate(-2.0f)
                         .setAngle_adjust((Math.PI * -9.0 / 180.0).toFloat())
-                        .setTranslate(floatArrayOf(3.1f, -2.0f))
-                        .setColor(floatArrayOf(0.0f, 0.8f, 0.2f, 1.0f)),
+                        .setTranslate(arrayOf(3.1f, -2.0f))
+                        .setColor(arrayOf(0.0f, 0.8f, 0.2f, 1.0f)),
                 GearInfo()
                         .setTeeth(10)
                         .setInner_radius(1.3f)
@@ -185,12 +187,12 @@ void main()
                         .setTooth_depth(0.7f)
                         .setAngle_rate(-2.0f)
                         .setAngle_adjust((Math.PI * -25.0 / 180.0).toFloat())
-                        .setTranslate(floatArrayOf(-3.1f, 4.2f))
-                        .setColor(floatArrayOf(0.2f, 0.2f, 1.0f, 1.0f)))
+                        .setTranslate(arrayOf(-3.1f, 4.2f))
+                        .setColor(arrayOf(0.2f, 0.2f, 1.0f, 1.0f)))
 
         fun rotate_gears(x: Float, y: Float, z: Float) {
-            var m4: FloatArray?
-            var tmp: FloatArray?
+            var m4: Array<Float>
+            var tmp: Array<Float>
             var i: Int
             for (g in gears) {
                 m4 = GfxMath.rotate(x.toDouble(), 1.0, 0.0, 0.0)
@@ -202,7 +204,7 @@ void main()
                     tmp = GfxMath.rotate(z.toDouble(), 0.0, 0.0, 1.0)
                     m4 = GfxMath.mult_m4m4(m4, tmp)
                 }
-                tmp = GfxMath.translate(g!!.translate[0], g.translate[1], 0.0f)
+                tmp = GfxMath.translate(g.translate[0], g.translate[1], 0.0f)
                 m4 = GfxMath.mult_m4m4(m4, tmp)
                 g.setModel(m4)
             }
