@@ -1,5 +1,8 @@
 package org.gears3d.gears3d
 
+import kotlin.math.cos
+import kotlin.math.sin
+
 object GfxMath {
     fun frustum(left: Double, right: Double, bottom: Double,
                 top: Double, nearVal: Double, farVal: Double): Array<Float> {
@@ -38,28 +41,26 @@ object GfxMath {
          *
          */
         assert(left != right && top != bottom && farVal != nearVal)
-        val A = (right + left) / (right - left)
-        val B = (top + bottom) / (top - bottom)
-        val C = -(farVal + nearVal) / (farVal - nearVal)
-        val D = -(2.0 * farVal * nearVal) / (farVal - nearVal)
-        val mat4 = Array<Float>(16) { 0.0f }
+        val a = (right + left) / (right - left)
+        val b = (top + bottom) / (top - bottom)
+        val c = -(farVal + nearVal) / (farVal - nearVal)
+        val d = -(2.0 * farVal * nearVal) / (farVal - nearVal)
+        val mat4 = Array(16) { 0.0f }
         mat4[mat4_idx(0, 0)] = (2.0 * nearVal / (right - left)).toFloat()
-        mat4[mat4_idx(0, 2)] = A.toFloat()
+        mat4[mat4_idx(0, 2)] = a.toFloat()
         mat4[mat4_idx(1, 1)] = (2.0 * nearVal / (top - bottom)).toFloat()
-        mat4[mat4_idx(1, 2)] = B.toFloat()
-        mat4[mat4_idx(2, 2)] = C.toFloat()
-        mat4[mat4_idx(2, 3)] = D.toFloat()
+        mat4[mat4_idx(1, 2)] = b.toFloat()
+        mat4[mat4_idx(2, 2)] = c.toFloat()
+        mat4[mat4_idx(2, 3)] = d.toFloat()
         mat4[mat4_idx(3, 2)] = -1.0f
         return mat4
     }
 
     fun mult_m4m4(src1: Array<Float>, src2: Array<Float>): Array<Float> {
-        var i: Int
-        var j: Int
-        val mat4 = Array<Float>(16) { 0.0f }
-        i = 0
+        val mat4 = Array(16) { 0.0f }
+        var i = 0
         while (i < 4) {
-            j = 0
+            var j = 0
             while (j < 4) {
                 mat4[mat4_idx(i, j)] =
                     src1[mat4_idx(i, 0)] * src2[mat4_idx(0, j)] +
@@ -87,7 +88,7 @@ object GfxMath {
          * \              /
          *
          */
-        val mat4 = Array<Float>(16) { 0.0f }
+        val mat4 = Array(16) { 0.0f }
         mat4[mat4_idx(0, 0)] = 1.0f
         mat4[mat4_idx(1, 1)] = 1.0f
         mat4[mat4_idx(2, 2)] = 1.0f
@@ -116,10 +117,10 @@ object GfxMath {
          * c = cos(angle), s = sin(angle)
          *
          */
-        val c = Math.cos(angle)
+        val c = cos(angle)
         val omc = 1.0 - c
-        val s = Math.sin(angle)
-        val mat4 = Array<Float>(16) { 0.0f }
+        val s = sin(angle)
+        val mat4 = Array(16) { 0.0f }
         mat4[mat4_idx(0, 0)] = (x * x * omc + c).toFloat()
         mat4[mat4_idx(0, 1)] = (x * y * omc - z * s).toFloat()
         mat4[mat4_idx(0, 2)] = (x * z * omc + y * s).toFloat()
