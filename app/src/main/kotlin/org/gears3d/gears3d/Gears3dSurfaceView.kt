@@ -1,3 +1,4 @@
+/* Jordan Justen : gears3d is public domain */
 package org.gears3d.gears3d
 
 import android.content.Context
