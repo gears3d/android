@@ -4,7 +4,6 @@ package org.gears3d.gears3d
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
-import android.view.View
 import android.view.View.OnTouchListener
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
