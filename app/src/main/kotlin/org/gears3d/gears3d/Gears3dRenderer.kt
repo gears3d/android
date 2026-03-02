@@ -6,11 +6,7 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 class Gears3dRenderer : GLSurfaceView.Renderer {
-    var mGears3d: Gears3d
-
-    init {
-        mGears3d = Gears3d()
-    }
+    private var mGears3d: Gears3d = Gears3d()
 
     override fun onSurfaceCreated(gl10: GL10, eglConfig: EGLConfig) {
         mGears3d.set_global_state()
